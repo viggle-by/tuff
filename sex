@@ -1,0 +1,3 @@
+docker run -it \
+  -p 8443:8443 \
+  tuff2

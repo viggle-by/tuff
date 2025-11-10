@@ -46,4 +46,4 @@ WORKDIR /home/mysticgiggle/project
 EXPOSE 8443
 
 # Default command (secure password via env)
-CMD ["bash", "-c", "code-server --bind-addr 0.0.0.0:8443 --auth password --password '${PASSWORD:-giggle'"]
+CMD ["bash", "-c", "code-server --bind-addr 0.0.0.0:8443 --auth password"]
