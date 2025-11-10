@@ -1,11 +1,9 @@
 # Use Ubuntu 24.04 as base
 FROM ubuntu:24.04
 
-# Set environment variables
+# Set environment variables (non-sensitive)
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CODE_SERVER_PORT=8443
-ENV PASSWORD=changeme
-ENV HOSTNAME=ubuntu
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -15,10 +13,6 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     sudo \
     && rm -rf /var/lib/apt/lists/*
-
-# Set hostname inside the container
-RUN echo "ubuntu" > /etc/hostname && \
-    echo "127.0.0.1 ubuntu" >> /etc/hosts
 
 # Install code-server
 RUN echo "**** install code-server ****" && \
@@ -42,16 +36,14 @@ RUN useradd -m -s /bin/bash mysticgiggle && \
 
 # Copy project files from host into container
 COPY . /home/mysticgiggle/project
-
-# Set ownership for copied files
 RUN chown -R mysticgiggle:mysticgiggle /home/mysticgiggle/project
 
-# Switch to the new user
+# Switch to non-root user
 USER mysticgiggle
 WORKDIR /home/mysticgiggle/project
 
 # Expose port 8443
 EXPOSE 8443
 
-# Default command to start code-server
-CMD ["bash", "-c", "code-server --bind-addr 0.0.0.0:8443 --auth password"]
+# Default command (secure password via env)
+CMD ["bash", "-c", "code-server --bind-addr 0.0.0.0:8443 --auth password --password '${PASSWORD:-giggle'"]
